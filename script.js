@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000";
+const API = "https://bikini-roman-ware-likelihood.trycloudflare.com";
 document.getElementById("access-button").addEventListener("click", async () => {
     const result = document.getElementById("result");
 
