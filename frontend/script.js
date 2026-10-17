@@ -1,4 +1,4 @@
-const API = "https://bikini-roman-ware-likelihood.trycloudflare.com";
+const API = "https://enters-merchants-charter-philosophy.trycloudflare.com";
 document.getElementById("access-button").addEventListener("click", async () => {
     const result = document.getElementById("result");
 
