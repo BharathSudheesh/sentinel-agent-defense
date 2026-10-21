@@ -1,4 +1,4 @@
-const API = "https://historic-moore-tourism-unable.trycloudflare.com";
+const API = "https://exhaust-label-auto-findlaw.trycloudflare.com";
 document.getElementById("access-button").addEventListener("click", async () => {
     const result = document.getElementById("result");
 
