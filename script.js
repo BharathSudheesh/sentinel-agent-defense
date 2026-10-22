@@ -1,4 +1,4 @@
-const API = "https://flu-coordinates-july-polo.trycloudflare.com";
+const API = "https://temple-workforce-connected-earliest.trycloudflare.com";
 document.getElementById("access-button").addEventListener("click", async () => {
     const result = document.getElementById("result");
 
