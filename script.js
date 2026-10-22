@@ -1,4 +1,4 @@
-const API = "https://exhaust-label-auto-findlaw.trycloudflare.com";
+const API = "https://flu-coordinates-july-polo.trycloudflare.com";
 document.getElementById("access-button").addEventListener("click", async () => {
     const result = document.getElementById("result");
 
