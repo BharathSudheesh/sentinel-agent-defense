@@ -1,4 +1,4 @@
-const API = "https://temple-workforce-connected-earliest.trycloudflare.com";
+const API = "https://translated-sao-clarity-sort.trycloudflare.com";
 document.getElementById("access-button").addEventListener("click", async () => {
     const result = document.getElementById("result");
 
