@@ -1,7 +1,7 @@
 
 import httpx
 
-URL = "http://127.0.0.1:8000/protected"
+URL = "https://dept-bodies-reception-reductions.trycloudflare.com/protected"
 
 def run_agent():
     print("AI Agent: Attempting to access the website...")
