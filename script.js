@@ -1,4 +1,4 @@
-const API = "https://dept-bodies-reception-reductions.trycloudflare.com";
+const API = "https://finance-certified-portsmouth-him.trycloudflare.com";
 document.getElementById("access-button").addEventListener("click", async () => {
     const result = document.getElementById("result");
 
