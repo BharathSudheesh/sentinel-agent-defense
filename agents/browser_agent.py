@@ -1,7 +1,7 @@
 
 from playwright.sync_api import sync_playwright
 
-URL = "http://127.0.0.1:8000/protected"
+URL = "https://sentinel-agent-defense.onrender.com/protected"
 
 with sync_playwright() as p:
     browser = p.chromium.launch(headless=True)
