@@ -5,12 +5,15 @@ const REFRESH_INTERVAL_MS = 5000;
 const accessButton = document.getElementById("access-button");
 const result = document.getElementById("result");
 const statusElement = document.getElementById("status");
+
 const totalRequestsElement = document.getElementById("total-requests");
 const allowedCountElement = document.getElementById("allowed-count");
 const blockedCountElement = document.getElementById("blocked-count");
+
 const activityRowsElement = document.getElementById("activity-rows");
 const activityUpdatedElement = document.getElementById("activity-updated");
 const refreshActivityButton = document.getElementById("refresh-activity");
+
 
 function setResult(title, message, decision = "neutral") {
     if (!result) return;
@@ -27,15 +30,19 @@ function setResult(title, message, decision = "neutral") {
     result.append(heading, detail);
 }
 
+
 async function readResponse(response) {
     const text = await response.text();
 
     try {
         return text ? JSON.parse(text) : {};
     } catch {
-        return { message: text || "The server returned an empty response." };
+        return {
+            message: text || "The server returned an empty response."
+        };
     }
 }
+
 
 async function checkServer() {
     try {
@@ -48,14 +55,21 @@ async function checkServer() {
             throw new Error(`HTTP ${response.status}`);
         }
 
-        if (statusElement) statusElement.textContent = "Online";
+        if (statusElement) {
+            statusElement.textContent = "Online";
+        }
+
         return true;
     } catch (error) {
-        if (statusElement) statusElement.textContent = "Connection unavailable";
+        if (statusElement) {
+            statusElement.textContent = "Connection unavailable";
+        }
+
         console.error("Sentinel backend connection failed:", error);
         return false;
     }
 }
+
 
 async function testProtectedAccess() {
     if (!accessButton) return;
@@ -76,46 +90,53 @@ async function testProtectedAccess() {
         });
 
         const data = await readResponse(response);
-        const blocked = response.status === 403 || data.status === "blocked";
+
+        const blocked =
+            response.status === 403 ||
+            data.status === "blocked";
 
         if (blocked) {
             setResult(
                 `Access Denied — HTTP ${response.status}`,
                 `${data.message || "The request was blocked."} Reason: ${data.reason || "Detection rule matched."}`,
-                "blocked"
+                "denied"
             );
         } else if (response.ok) {
             setResult(
                 `Access Granted — HTTP ${response.status}`,
-                data.message || "You can access the protected content.",
-                "allowed"
+                data.message || "Access granted to protected content.",
+                "granted"
             );
         } else {
             setResult(
                 `Request Failed — HTTP ${response.status}`,
                 data.message || "The backend returned an unexpected response.",
-                "neutral"
+                "error"
             );
         }
     } catch (error) {
         setResult(
             "Connection Failed",
-            "Could not reach the backend. Confirm FastAPI is running and the Cloudflare Tunnel URL is still active.",
-            "neutral"
+            "Could not reach the backend. Check that FastAPI is running and the Cloudflare Tunnel URL is active.",
+            "error"
         );
 
         console.error("Protected access test failed:", error);
     } finally {
         accessButton.disabled = false;
         accessButton.classList.remove("testing");
+
         await refreshActivity();
     }
 }
 
+
 async function refreshActivity() {
     if (!activityRowsElement) return;
 
-    if (refreshActivityButton) refreshActivityButton.disabled = true;
+    if (refreshActivityButton) {
+        refreshActivityButton.disabled = true;
+    }
 
     try {
         const response = await fetch(`${API}/activity`, {
@@ -126,7 +147,9 @@ async function refreshActivity() {
         const data = await readResponse(response);
 
         if (!response.ok) {
-            throw new Error(`Activity endpoint returned HTTP ${response.status}`);
+            throw new Error(
+                `Activity endpoint returned HTTP ${response.status}`
+            );
         }
 
         const counts = data.counts || {};
@@ -167,20 +190,42 @@ async function refreshActivity() {
                 const reasonCell = document.createElement("td");
                 const clientCell = document.createElement("td");
 
-                const date = entry.time ? new Date(entry.time) : null;
+                const date = entry.time
+                    ? new Date(entry.time)
+                    : null;
 
                 timeCell.textContent =
                     date && !Number.isNaN(date.getTime())
                         ? date.toLocaleTimeString()
                         : "—";
 
+                const decisionText = (
+                    entry.decision || "UNKNOWN"
+                ).toUpperCase();
+
                 const decision = document.createElement("span");
-                decision.className = "decision-label";
-                decision.textContent = entry.decision || "UNKNOWN";
+
+                decision.className =
+                    decisionText === "ALLOW"
+                        ? "decision-allow"
+                        : decisionText === "BLOCK"
+                            ? "decision-block"
+                            : "";
+
+                decision.textContent = decisionText;
                 decisionCell.appendChild(decision);
 
+                const statusCode = entry.status_code;
+
                 statusCell.textContent =
-                    entry.status_code != null ? entry.status_code : "—";
+                    statusCode != null ? statusCode : "—";
+
+                statusCell.className =
+                    Number(statusCode) === 200
+                        ? "status-200"
+                        : Number(statusCode) === 403
+                            ? "status-403"
+                            : "";
 
                 reasonCell.textContent = entry.reason || "—";
                 clientCell.textContent = entry.client || "—";
@@ -193,6 +238,16 @@ async function refreshActivity() {
                     clientCell
                 );
 
+                row.classList.toggle(
+                    "activity-allowed",
+                    decisionText === "ALLOW"
+                );
+
+                row.classList.toggle(
+                    "activity-blocked",
+                    decisionText === "BLOCK"
+                );
+
                 activityRowsElement.appendChild(row);
             }
         }
@@ -202,7 +257,9 @@ async function refreshActivity() {
                 `Last updated ${new Date().toLocaleTimeString()}`;
         }
 
-        if (statusElement) statusElement.textContent = "Online";
+        if (statusElement) {
+            statusElement.textContent = "Online";
+        }
     } catch (error) {
         if (activityUpdatedElement) {
             activityUpdatedElement.textContent = "Activity unavailable";
@@ -223,9 +280,12 @@ async function refreshActivity() {
 
         console.error("Could not refresh activity:", error);
     } finally {
-        if (refreshActivityButton) refreshActivityButton.disabled = false;
+        if (refreshActivityButton) {
+            refreshActivityButton.disabled = false;
+        }
     }
 }
+
 
 if (accessButton) {
     accessButton.addEventListener("click", testProtectedAccess);
@@ -234,6 +294,7 @@ if (accessButton) {
 if (refreshActivityButton) {
     refreshActivityButton.addEventListener("click", refreshActivity);
 }
+
 
 async function initializeSentinel() {
     await checkServer();

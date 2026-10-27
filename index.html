@@ -4,332 +4,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#031329">
+    <meta name="theme-color" content="#061326">
     <title>Sentinel | Agent Defense System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
-
 <body>
-    <div class="app-shell">
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
 
-        <!-- Header -->
-        <header class="topbar">
-            <a class="brand" href="#" aria-label="Sentinel home">
-                <span class="brand-mark">S</span>
-                <span class="brand-copy">
-                    <strong>SENTINEL</strong>
-                    <small>AGENT DEFENSE SYSTEM</small>
-                </span>
-            </a>
+    <header class="navbar">
+        <a href="#" class="brand" aria-label="Sentinel home">
+            <span class="brand-icon">S</span>
+            <span class="brand-copy">
+                <span class="brand-name">SENTINEL</span>
+                <span class="brand-caption">AGENT DEFENSE SYSTEM</span>
+            </span>
+        </a>
 
-            <div class="console-label">
-                <span class="status-dot" id="header-status-dot"></span>
-                <span>SECURITY CONSOLE</span>
-                <span class="version-tag">V1.0</span>
+        <div class="nav-right">
+            <span class="nav-indicator"></span>
+            <span>SECURITY CONSOLE</span>
+            <span class="version">V1.0</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                INTELLIGENT ACCESS PROTECTION
             </div>
-        </header>
 
-        <main class="main-content">
+            <h1>
+                Secure your website.<br>
+                <span>Control every request.</span>
+            </h1>
 
-            <!-- Hero -->
-            <section class="hero">
-                <div class="eyebrow">
-                    <span class="eyebrow-dot"></span>
-                    INTELLIGENT ACCESS PROTECTION
-                </div>
+            <p class="hero-description">
+                Detect known automation signatures, evaluate incoming requests,
+                and protect restricted resources through a centralized security layer.
+            </p>
 
-                <h1>
-                    Secure your website.<br>
-                    <span class="gradient-text">Control every request.</span>
-                </h1>
+            <div class="hero-tags">
+                <span>◈ Request Analysis</span>
+                <span>◈ Access Control</span>
+                <span>◈ Security Logging</span>
+            </div>
+        </section>
 
-                <p class="hero-description">
-                    Detect known automation signatures, evaluate incoming requests,
-                    and protect restricted resources through a centralized security layer.
+        <!-- README: preserve original horizontal layout -->
+        <section class="readme-card panel" aria-labelledby="readme-title">
+            <div class="readme-icon" aria-hidden="true">▤</div>
+
+            <div class="readme-copy">
+                <h2 id="readme-title">Read the README.md First</h2>
+                <p>
+                    Please read the README.md in our GitHub repository before using this demo.
+                    It explains the project overview, features, how to test, example agent scripts,
+                    and important notes.
                 </p>
+            </div>
 
-                <div class="feature-tags">
-                    <span>◈ Request Analysis</span>
-                    <span>◈ Access Control</span>
-                    <span>◈ Security Logging</span>
+            <div class="readme-action">
+                <a
+                    class="readme-button"
+                    href="https://github.com/BharathSudheesh/sentinel-agent-defense/blob/main/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span aria-hidden="true">◉</span>
+                    View README.md
+                    <span aria-hidden="true">↗</span>
+                </a>
+                <span class="readme-note">Opens the project documentation on GitHub</span>
+            </div>
+        </section>
+
+        <!-- Quick Guide: four cards in one horizontal row -->
+        <section class="guide-card panel" aria-labelledby="guide-title">
+            <div class="guide-heading">
+                <div class="guide-icon" aria-hidden="true">▤</div>
+                <div>
+                    <h2 id="guide-title">How to Use <span>Sentinel</span></h2>
+                    <p>Follow the steps below to understand and test the Agent Defense System.</p>
                 </div>
-            </section>
+            </div>
 
-            <!-- README panel -->
-            <section class="readme-panel panel">
-                <div class="readme-icon icon-tile">▤</div>
+            <div class="guide-steps">
+                <article class="guide-step">
+                    <div class="step-heading">
+                        <span class="step-number">1</span>
+                        <h3>Read the README.md</h3>
+                    </div>
+                    <div class="step-content">
+                        <span class="step-icon" aria-hidden="true">▤</span>
+                        <ul>
+                            <li>Understand the project goal</li>
+                            <li>Learn how detection works</li>
+                            <li>Check how to run the test agents</li>
+                            <li>See limitations and important notes</li>
+                        </ul>
+                    </div>
+                </article>
 
-                <div class="readme-copy">
-                    <h2>Read the README.md First</h2>
+                <article class="guide-step">
+                    <div class="step-heading">
+                        <span class="step-number">2</span>
+                        <h3>Test as a Normal User</h3>
+                    </div>
+                    <div class="step-content">
+                        <span class="step-icon user-icon" aria-hidden="true">♙</span>
+                        <ul>
+                            <li>Click “Test Protected Access” below</li>
+                            <li>This sends a request to /protected</li>
+                            <li>A normal browser should usually receive HTTP 200</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="guide-step">
+                    <div class="step-heading">
+                        <span class="step-number">3</span>
+                        <h3>Test with an AI Agent</h3>
+                    </div>
+                    <div class="step-content">
+                        <span class="step-icon agent-icon" aria-hidden="true">♧</span>
+                        <ul>
+                            <li>Run a script from your local agents/ folder</li>
+                            <li>Scripts simulate automated requests</li>
+                            <li>Recognized markers should receive HTTP 403</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="guide-step">
+                    <div class="step-heading">
+                        <span class="step-number">4</span>
+                        <h3>Check the Results</h3>
+                    </div>
+                    <div class="step-content">
+                        <span class="step-icon chart-icon" aria-hidden="true">▥</span>
+                        <ul>
+                            <li>Normal user: access granted, HTTP 200</li>
+                            <li>Recognized automation: HTTP 403</li>
+                            <li>Review the live result and activity logs below</li>
+                        </ul>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Protected access and live response -->
+        <section class="access-panel panel" aria-labelledby="access-title">
+            <div class="access-intro">
+                <div class="access-shield" aria-hidden="true">♢</div>
+
+                <div class="access-copy">
+                    <p class="section-label">RESTRICTED RESOURCE</p>
+                    <h2 id="access-title">Test Protected Access</h2>
                     <p>
-                        Please read the README.md in our GitHub repository before
-                        using this demo. It explains the project overview, features,
-                        how to test, example agent scripts, and important notes.
+                        Click the button to send a request to the protected endpoint
+                        (/protected) and see the server's decision in real time.
                     </p>
+                    <div class="endpoint"><span>GET</span> /protected</div>
                 </div>
 
-                <div class="readme-action">
-                    <a
-                        class="readme-button"
-                        href="https://github.com/BharathSudheesh/sentinel-agent-defense/blob/main/README.md"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <span>◉</span> View README.md <span>↗</span>
-                    </a>
-                    <small>Opens the project documentation on GitHub</small>
-                </div>
-            </section>
+                <button id="access-button" class="access-button" type="button">
+                    <span class="button-dot"></span>
+                    <span class="play-icon" aria-hidden="true">▷</span>
+                    <span>Test Protected Access</span>
+                    <span class="button-arrow" aria-hidden="true">→</span>
+                </button>
+            </div>
 
-            <!-- Instructions -->
-            <section class="guide-panel panel">
-                <div class="section-heading guide-heading">
-                    <div class="guide-heading-icon icon-tile">▤</div>
+            <aside class="live-result-card" aria-labelledby="live-result-title">
+                <div class="live-result-heading">
+                    <span class="live-result-icon" aria-hidden="true">▤</span>
                     <div>
-                        <h2>How to Use <span class="gradient-text">Sentinel</span></h2>
-                        <p>Follow the steps below to understand and test the Agent Defense System.</p>
+                        <h3 id="live-result-title">Live Result</h3>
+                        <p>The response from the server will appear here.</p>
                     </div>
                 </div>
 
-                <div class="steps-grid">
-                    <article class="step-card">
-                        <div class="step-title">
-                            <span class="step-number">1</span>
-                            <h3>Read the README.md</h3>
-                        </div>
-                        <div class="step-body">
-                            <span class="step-icon">▤</span>
-                            <ul>
-                                <li>Understand the project goal</li>
-                                <li>Learn how the detection works</li>
-                                <li>Check how to run the test agents</li>
-                                <li>See limitations and important notes</li>
-                            </ul>
-                        </div>
-                    </article>
-
-                    <article class="step-card">
-                        <div class="step-title">
-                            <span class="step-number">2</span>
-                            <h3>Test as a Normal User</h3>
-                        </div>
-                        <div class="step-body">
-                            <span class="step-icon">♙</span>
-                            <ul>
-                                <li>Click “Test Protected Access” below</li>
-                                <li>This sends a request to /protected</li>
-                                <li>A normal browser should usually receive HTTP 200</li>
-                            </ul>
-                        </div>
-                    </article>
-
-                    <article class="step-card">
-                        <div class="step-title">
-                            <span class="step-number">3</span>
-                            <h3>Test with an AI Agent</h3>
-                        </div>
-                        <div class="step-body">
-                            <span class="step-icon">♧</span>
-                            <ul>
-                                <li>Run a script from your local agents/ folder</li>
-                                <li>Scripts simulate automated requests</li>
-                                <li>Recognized markers should receive HTTP 403</li>
-                            </ul>
-                        </div>
-                    </article>
-
-                    <article class="step-card">
-                        <div class="step-title">
-                            <span class="step-number">4</span>
-                            <h3>Check the Results</h3>
-                        </div>
-                        <div class="step-body">
-                            <span class="step-icon">▥</span>
-                            <ul>
-                                <li>Normal user: access granted, HTTP 200</li>
-                                <li>Recognized automation: HTTP 403</li>
-                                <li>Review the live result and activity logs below</li>
-                            </ul>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <!-- Protected access -->
-            <section class="access-panel panel">
-                <div class="access-main">
-                    <div class="access-shield icon-tile">♢</div>
-
-                    <div class="access-description">
-                        <h2>Test Protected Access</h2>
-                        <p>
-                            Click the button to send a request to the protected
-                            endpoint (/protected) and see the server’s decision in real time.
-                        </p>
-                    </div>
-
-                    <button
-                        class="access-button"
-                        id="access-button"
-                        type="button"
-                    >
-                        <span class="button-indicator" id="button-indicator"></span>
-                        <span class="button-play" id="button-play">▷</span>
-                        <span id="button-label">Test Protected Access</span>
-                        <span class="button-arrow">→</span>
-                    </button>
-                </div>
-
-                <div class="live-result" id="live-result">
-                    <div class="result-heading">
-                        <span class="result-file icon-tile">▤</span>
-                        <div>
-                            <h3>Live Result</h3>
-                            <p>The response from the server will appear here.</p>
-                        </div>
-                        <span class="result-indicator" id="result-indicator"></span>
-                    </div>
-
-                    <div class="result-code">
-                        <pre id="result-json">{
-  "status": "Ready to test",
-  "message": "Click Test Protected Access to check access.",
-  "status_code": null
-}</pre>
-                        <button
-                            class="copy-button"
-                            id="copy-result"
-                            type="button"
-                            aria-label="Copy result"
-                            title="Copy result"
-                        >▢</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Dashboard -->
-            <section class="dashboard-section">
-                <div class="dashboard-heading">
+                <div id="result" class="result-box" aria-live="polite" aria-atomic="true">
+                    <span class="result-icon">◷</span>
                     <div>
-                        <span class="section-kicker">OVERVIEW</span>
-                        <h2>Security Dashboard</h2>
+                        <strong>Ready to test</strong>
+                        <p>Click Test Protected Access to check access.</p>
                     </div>
+                </div>
+            </aside>
+        </section>
 
-                    <div class="live-controls">
-                        <span class="live-badge">
-                            <span class="status-dot" id="live-status-dot"></span>
-                            LIVE UPDATES
-                        </span>
-                        <span class="refresh-caption">Auto refreshes every 5 seconds</span>
-                        <button
-                            class="icon-button"
-                            id="refresh-activity"
-                            type="button"
-                            aria-label="Refresh activity"
-                            title="Refresh activity"
-                        >↻</button>
+        <!-- Recent Activity Logs -->
+        <section class="activity-panel panel" aria-labelledby="activity-title">
+            <div class="activity-heading">
+                <div class="activity-title-group">
+                    <span class="activity-icon" aria-hidden="true">◷</span>
+                    <div>
+                        <h2 id="activity-title">Recent Activity Logs</h2>
+                        <p>Latest protected-endpoint decisions</p>
                     </div>
                 </div>
 
-                <div class="stats-grid">
-                    <article class="stat-card panel">
-                        <div class="stat-icon">▤</div>
-                        <div class="stat-copy">
-                            <span class="stat-label">SYSTEM STATUS</span>
-                            <strong><span class="status-dot" id="system-dot"></span><span id="system-status">Checking...</span></strong>
-                            <p id="system-description">Checking backend connectivity.</p>
-                        </div>
-                        <span class="stat-decoration">⌁</span>
-                    </article>
+                <a
+                    class="repository-button"
+                    href="https://github.com/BharathSudheesh/sentinel-agent-defense"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    View Repository ↗
+                </a>
+            </div>
 
-                    <article class="stat-card panel">
-                        <div class="stat-icon">⚙</div>
-                        <div class="stat-copy">
-                            <span class="stat-label">DETECTION ENGINE</span>
-                            <strong><span class="status-dot" id="engine-dot"></span><span id="engine-status">Signature-based</span></strong>
-                            <p>Known automation markers</p>
-                        </div>
-                        <span class="stat-decoration">⬡</span>
-                    </article>
-
-                    <article class="stat-card panel">
-                        <div class="stat-icon">♢</div>
-                        <div class="stat-copy">
-                            <span class="stat-label">ACCESS POLICY</span>
-                            <strong><span class="status-dot" id="policy-dot"></span><span id="policy-status">Enforcing</span></strong>
-                            <p>Protected endpoint checks</p>
-                        </div>
-                        <span class="stat-decoration">⬡</span>
-                    </article>
-
-                    <article class="stat-card panel">
-                        <div class="stat-icon">▤</div>
-                        <div class="stat-copy">
-                            <span class="stat-label">TOTAL REQUESTS</span>
-                            <strong class="request-total" id="total-requests">0</strong>
-                            <p>Live count from server</p>
-                        </div>
-                        <span class="stat-decoration">▥</span>
-                    </article>
+            <div class="activity-summary">
+                <div class="summary-item">
+                    <span>Allowed</span>
+                    <strong id="allowed-count" class="allowed-text">0</strong>
                 </div>
 
-                <!-- Activity logs -->
-                <section class="activity-panel panel">
-                    <div class="activity-heading">
-                        <div class="activity-title">
-                            <span class="activity-clock">◷</span>
-                            <h3>Recent Activity Logs</h3>
-                            <span class="activity-subtitle">Latest protected-endpoint decisions</span>
-                        </div>
+                <div class="summary-item">
+                    <span>Blocked</span>
+                    <strong id="blocked-count" class="blocked-text">0</strong>
+                </div>
 
-                        <a
-                            class="view-logs-link"
-                            href="https://github.com/BharathSudheesh/sentinel-agent-defense"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >View Repository ↗</a>
+                <div class="summary-item updated-item">
+                    <span>Last updated</span>
+                    <strong id="activity-updated">Waiting for activity</strong>
+                </div>
+
+                <button id="refresh-activity" class="refresh-button" type="button">
+                    Refresh logs ↻
+                </button>
+            </div>
+
+            <div class="table-wrap">
+                <table class="activity-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">TIME</th>
+                            <th scope="col">DECISION</th>
+                            <th scope="col">HTTP</th>
+                            <th scope="col">REASON</th>
+                            <th scope="col">CLIENT</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="activity-rows">
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                Waiting for backend activity…
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="activity-note">
+                Detection relies on known request markers and is not definitive proof of AI identity.
+            </p>
+        </section>
+
+        <section class="process-panel" aria-labelledby="process-title">
+            <div class="process-heading">
+                <p class="section-label">HOW IT WORKS</p>
+                <h2 id="process-title">Request <span>→</span> Detect <span>→</span> Decide</h2>
+            </div>
+
+            <div class="process-steps">
+                <article class="process-step">
+                    <span class="process-number">01</span>
+                    <div>
+                        <h3>Incoming Request</h3>
+                        <p>A client requests protected content.</p>
                     </div>
+                </article>
 
-                    <div class="activity-summary">
-                        <span>Allowed <strong id="allowed-count">0</strong></span>
-                        <span>Blocked <strong id="blocked-count">0</strong></span>
-                        <span>Last updated <strong id="activity-updated">—</strong></span>
+                <span class="process-arrow" aria-hidden="true">→</span>
+
+                <article class="process-step">
+                    <span class="process-number">02</span>
+                    <div>
+                        <h3>Marker Inspection</h3>
+                        <p>The backend checks known signatures.</p>
                     </div>
+                </article>
 
-                    <div class="table-wrap">
-                        <table class="activity-table">
-                            <thead>
-                                <tr>
-                                    <th>TIME</th>
-                                    <th>METHOD</th>
-                                    <th>ENDPOINT</th>
-                                    <th>USER AGENT</th>
-                                    <th>STATUS</th>
-                                    <th>REASON</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activity-rows">
-                                <tr>
-                                    <td colspan="6" class="empty-state">
-                                        Waiting for backend activity...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <span class="process-arrow" aria-hidden="true">→</span>
+
+                <article class="process-step">
+                    <span class="process-number">03</span>
+                    <div>
+                        <h3>Access Decision</h3>
+                        <p>The server allows or denies the request.</p>
                     </div>
+                </article>
+            </div>
+        </section>
 
-                    <p class="activity-note">
-                        Detection relies on known request markers and is not definitive proof of AI identity.
-                    </p>
-                </section>
-            </section>
-
-            <footer class="footer">
-                <span>SENTINEL · AGENT DEFENSE SYSTEM</span>
-                <span>Security demonstration · Signature-based detection</span>
-            </footer>
-        </main>
-    </div>
+        <footer class="footer">
+            <div class="footer-brand">
+                <span class="footer-logo">S</span>
+                <span>SENTINEL</span>
+            </div>
+            <p>Agent Defense System · Security Research Prototype</p>
+        </footer>
+    </main>
 </body>
 </html>

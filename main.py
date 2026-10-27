@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 
 from detector import detect_agent
 
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("agent-defense")
 
@@ -31,43 +32,54 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory activity storage.
-# Entries are lost when the backend restarts.
-MAX_ACTIVITY_LOGS = 200
-activity_logs = deque(maxlen=MAX_ACTIVITY_LOGS)
+# In-memory activity history; resets when the backend restarts.
+MAX_LOGS = 200
+activity_logs = deque(maxlen=MAX_LOGS)
 activity_lock = Lock()
 
-total_requests = 0
 allowed_count = 0
 blocked_count = 0
 
 
 def record_activity(
+    request: Request,
     decision: str,
     status_code: int,
-    client_ip: str,
     reason: str,
 ) -> None:
-    """Record a protected endpoint request and update counters."""
-    global total_requests, allowed_count, blocked_count
+    """Record one protected-endpoint access decision."""
+    global allowed_count, blocked_count
+
+    client_ip = (
+        request.client.host if request.client else "unknown"
+    )
 
     entry = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "time": datetime.now(timezone.utc).isoformat(),
         "decision": decision,
         "status_code": status_code,
-        "client_ip": client_ip,
         "reason": reason,
+        "client": client_ip,
+        "method": request.method,
+        "endpoint": request.url.path,
+        "user_agent": request.headers.get("user-agent", "unknown"),
     }
 
     with activity_lock:
-        total_requests += 1
+        activity_logs.appendleft(entry)
 
         if decision == "ALLOW":
             allowed_count += 1
         else:
             blocked_count += 1
 
-        activity_logs.appendleft(entry)
+    logger.info(
+        "PROTECTED PAGE | decision=%s | status=%s | ip=%s | reason=%s",
+        decision,
+        status_code,
+        client_ip,
+        reason,
+    )
 
 
 @app.get("/")
@@ -83,22 +95,11 @@ def protected_page(request: Request):
     user_agent = request.headers.get("user-agent", "")
     detected, reason = detect_agent(user_agent)
 
-    client_ip = (
-        request.client.host if request.client else "unknown"
-    )
-
     if detected:
-        logger.warning(
-            "PROTECTED PAGE | decision=BLOCK | status=403 "
-            "| ip=%s | reason=%s",
-            client_ip,
-            reason,
-        )
-
         record_activity(
+            request=request,
             decision="BLOCK",
             status_code=403,
-            client_ip=client_ip,
             reason=reason,
         )
 
@@ -111,17 +112,10 @@ def protected_page(request: Request):
             },
         )
 
-    logger.info(
-        "PROTECTED PAGE | decision=ALLOW | status=200 "
-        "| ip=%s | reason=%s",
-        client_ip,
-        reason,
-    )
-
     record_activity(
+        request=request,
         decision="ALLOW",
         status_code=200,
-        client_ip=client_ip,
         reason=reason,
     )
 
@@ -133,11 +127,17 @@ def protected_page(request: Request):
 
 @app.get("/activity")
 def get_activity():
-    """Return request counters and recent protected-page activity."""
+    """Return recent logs and cumulative allow/block counters."""
     with activity_lock:
-        return {
-            "total_requests": total_requests,
-            "allowed_count": allowed_count,
-            "blocked_count": blocked_count,
-            "logs": list(activity_logs),
-        }
+        logs = list(activity_logs)
+        allowed = allowed_count
+        blocked = blocked_count
+
+    return {
+        "counts": {
+            "total": allowed + blocked,
+            "allowed": allowed,
+            "blocked": blocked,
+        },
+        "logs": logs,
+    }
