@@ -1,5 +1,5 @@
 
-const API = "https://chapter-payment-totals-accuracy.trycloudflare.com";
+const API = "https://sentinel-agent-defense.onrender.com";
 const REFRESH_INTERVAL_MS = 5000;
 
 const accessButton = document.getElementById("access-button");
