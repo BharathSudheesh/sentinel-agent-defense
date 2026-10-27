@@ -1,5 +1,8 @@
 
 import logging
+from collections import deque
+from datetime import datetime, timezone
+from threading import Lock
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +15,7 @@ logger = logging.getLogger("agent-defense")
 
 app = FastAPI(title="Agent Defense System")
 
-# Allow your local Live Server frontend to access the backend.
+# Keep the existing frontend origins.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -27,6 +30,44 @@ app.add_middleware(
     allow_methods=["GET", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# In-memory activity storage.
+# Entries are lost when the backend restarts.
+MAX_ACTIVITY_LOGS = 200
+activity_logs = deque(maxlen=MAX_ACTIVITY_LOGS)
+activity_lock = Lock()
+
+total_requests = 0
+allowed_count = 0
+blocked_count = 0
+
+
+def record_activity(
+    decision: str,
+    status_code: int,
+    client_ip: str,
+    reason: str,
+) -> None:
+    """Record a protected endpoint request and update counters."""
+    global total_requests, allowed_count, blocked_count
+
+    entry = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "decision": decision,
+        "status_code": status_code,
+        "client_ip": client_ip,
+        "reason": reason,
+    }
+
+    with activity_lock:
+        total_requests += 1
+
+        if decision == "ALLOW":
+            allowed_count += 1
+        else:
+            blocked_count += 1
+
+        activity_logs.appendleft(entry)
 
 
 @app.get("/")
@@ -54,6 +95,13 @@ def protected_page(request: Request):
             reason,
         )
 
+        record_activity(
+            decision="BLOCK",
+            status_code=403,
+            client_ip=client_ip,
+            reason=reason,
+        )
+
         return JSONResponse(
             status_code=403,
             content={
@@ -70,7 +118,26 @@ def protected_page(request: Request):
         reason,
     )
 
+    record_activity(
+        decision="ALLOW",
+        status_code=200,
+        client_ip=client_ip,
+        reason=reason,
+    )
+
     return {
         "message": "Access granted to protected content.",
         "status": "allowed",
     }
+
+
+@app.get("/activity")
+def get_activity():
+    """Return request counters and recent protected-page activity."""
+    with activity_lock:
+        return {
+            "total_requests": total_requests,
+            "allowed_count": allowed_count,
+            "blocked_count": blocked_count,
+            "logs": list(activity_logs),
+        }

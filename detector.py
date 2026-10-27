@@ -1,12 +1,15 @@
+
 def detect_agent(user_agent: str) -> tuple[bool, str]:
     """
-    Detect known automation markers in a User-Agent string.
+    Detect known automation tools using User-Agent markers.
 
     Returns:
-        (True, marker) if a known marker is found.
+        (True, marker) if a known automation marker is found.
         (False, "no_known_marker") otherwise.
 
-    Note: This cannot reliably identify every AI agent.
+    Limitation:
+        User-Agent detection alone cannot reliably identify every
+        automated or AI-powered agent.
     """
 
     indicators = [
@@ -18,10 +21,10 @@ def detect_agent(user_agent: str) -> tuple[bool, str]:
         "demo-crawler",
     ]
 
-    user_agent = (user_agent or "").lower()
+    normalized_user_agent = (user_agent or "").lower()
 
     for marker in indicators:
-        if marker in user_agent:
+        if marker in normalized_user_agent:
             return True, marker
 
     return False, "no_known_marker"

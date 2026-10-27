@@ -42,7 +42,8 @@
                 INTELLIGENT ACCESS PROTECTION
             </div>
 
-            <h1>Secure your website.<br>
+            <h1>
+                Secure your website.<br>
                 <span>Control every request.</span>
             </h1>
 
@@ -58,26 +59,123 @@
             </div>
         </section>
 
+        <!-- README notice and usage guide -->
+        <section class="getting-started-grid" aria-label="Project guide and usage instructions">
+
+            <article class="panel guide-card readme-card">
+                <div class="panel-heading">
+                    <div class="panel-symbol">i</div>
+                    <div>
+                        <p class="section-label">START HERE</p>
+                        <h2>Read the README.md</h2>
+                    </div>
+                </div>
+
+                <p class="panel-description">
+                    Review the project setup, agent simulations, expected responses,
+                    and current detection limitations before testing Sentinel.
+                </p>
+
+                <a
+                    class="secondary-link"
+                    href="https://github.com/BharathSudheesh/agent-defence/blob/main/README.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Read Project Guide <span aria-hidden="true">↗</span>
+                </a>
+
+                <p class="small-note">
+                    Make sure the link matches your actual GitHub repository.
+                </p>
+            </article>
+
+            <article class="panel guide-card">
+                <div class="panel-heading">
+                    <div class="panel-symbol">?</div>
+                    <div>
+                        <p class="section-label">QUICK GUIDE</p>
+                        <h2>How to Use Sentinel</h2>
+                    </div>
+                </div>
+
+                <ol class="guide-steps">
+                    <li>
+                        <span>01</span>
+                        <div>
+                            <strong>Check the connection</strong>
+                            <p>Confirm that the backend is running and reachable.</p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span>02</span>
+                        <div>
+                            <strong>Test browser access</strong>
+                            <p>Click Test Protected Access. A normal browser request should usually be allowed.</p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span>03</span>
+                        <div>
+                            <strong>Run an agent simulation</strong>
+                            <p>Run a script from your local agents/ folder. Requests with recognized markers should receive HTTP 403.</p>
+                        </div>
+                    </li>
+
+                    <li>
+                        <span>04</span>
+                        <div>
+                            <strong>Review the activity</strong>
+                            <p>Check the result panel and recent backend activity below.</p>
+                        </div>
+                    </li>
+                </ol>
+            </article>
+
+        </section>
+
+        <!-- Security dashboard -->
         <section class="dashboard">
             <div class="section-heading">
                 <div>
                     <p class="section-label">OVERVIEW</p>
                     <h2>Security Dashboard</h2>
                 </div>
+
                 <span class="environment">
                     <span class="environment-dot"></span>
-                    LOCAL ENVIRONMENT
+                    CLOUDFLARE API CONNECTION
                 </span>
             </div>
 
             <div class="status-grid">
+
+                <article class="status-card metric-card">
+                    <div class="card-top">
+                        <span class="card-label">TOTAL PROTECTED REQUESTS</span>
+                        <span class="card-icon blue-icon">↗</span>
+                    </div>
+
+                    <h3 id="total-requests">—</h3>
+                    <p>Requests recorded by the backend</p>
+
+                    <div class="card-bottom">
+                        <span class="mini-dot"></span>
+                        Live activity count
+                    </div>
+                </article>
+
                 <article class="status-card">
                     <div class="card-top">
                         <span class="card-label">SYSTEM STATUS</span>
                         <span class="card-icon blue-icon">⌁</span>
                     </div>
+
                     <h3 id="status">Checking server status...</h3>
                     <p>Connection to the protection server</p>
+
                     <div class="card-bottom">
                         <span class="mini-dot"></span>
                         Backend health
@@ -89,8 +187,10 @@
                         <span class="card-label">DETECTION ENGINE</span>
                         <span class="card-icon purple-icon">⌘</span>
                     </div>
+
                     <h3>Signature-based</h3>
                     <p>Known automation markers</p>
+
                     <div class="card-bottom">
                         <span class="mini-dot purple-dot"></span>
                         Rule evaluation enabled
@@ -100,25 +200,32 @@
                 <article class="status-card">
                     <div class="card-top">
                         <span class="card-label">ACCESS POLICY</span>
-                        <span class="card-icon green-icon">◈</span>
+                        <span class="card-icon blue-icon">◈</span>
                     </div>
+
                     <h3>Protected Resources</h3>
                     <p>Requests checked by the backend</p>
+
                     <div class="card-bottom">
                         <span class="mini-dot"></span>
                         HTTP access control
                     </div>
                 </article>
+
             </div>
 
+            <!-- Public resource and protected-access test -->
             <div class="content-grid">
+
                 <article class="panel welcome-panel">
                     <div class="panel-heading">
                         <div class="panel-symbol">⌘</div>
+
                         <div>
                             <p class="section-label">PUBLIC RESOURCE</p>
                             <h2>Welcome to Sentinel</h2>
                         </div>
+
                         <span class="access-badge">PUBLIC</span>
                     </div>
 
@@ -135,13 +242,16 @@
 
                     <div class="info-strip">
                         <span class="info-symbol">i</span>
-                        <span>Detection relies on known request markers and is not definitive proof of AI identity.</span>
+                        <span>
+                            Detection relies on known request markers and is not definitive proof of AI identity.
+                        </span>
                     </div>
                 </article>
 
                 <article class="panel protected-panel">
                     <div class="panel-heading">
                         <div class="panel-symbol shield-symbol">⬡</div>
+
                         <div>
                             <p class="section-label">RESTRICTED RESOURCE</p>
                             <h2>Protected Content</h2>
@@ -159,7 +269,11 @@
                         <span class="endpoint-lock">⌑</span>
                     </div>
 
-                    <button id="access-button" class="access-button" type="button">
+                    <button
+                        id="access-button"
+                        class="access-button"
+                        type="button"
+                    >
                         <span>Test Protected Access</span>
                         <span class="button-arrow">→</span>
                     </button>
@@ -172,8 +286,75 @@
                         </div>
                     </div>
                 </article>
+
             </div>
 
+            <!-- Actual backend activity -->
+            <section class="activity-panel panel">
+                <div class="activity-heading">
+                    <div>
+                        <p class="section-label">BACKEND EVENTS</p>
+                        <h2>Recent Activity Logs</h2>
+
+                        <p class="panel-description">
+                            Latest protected-endpoint decisions reported by the backend.
+                        </p>
+                    </div>
+
+                    <button
+                        id="refresh-activity"
+                        class="refresh-button"
+                        type="button"
+                    >
+                        Refresh logs ↻
+                    </button>
+                </div>
+
+                <div class="activity-summary">
+                    <div>
+                        <span>Allowed</span>
+                        <strong id="allowed-count">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Blocked</span>
+                        <strong id="blocked-count">—</strong>
+                    </div>
+
+                    <div>
+                        <span>Last updated</span>
+                        <strong id="activity-updated">Not yet</strong>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="activity-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Decision</th>
+                                <th>HTTP</th>
+                                <th>Reason</th>
+                                <th>Client</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="activity-rows">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    Waiting for backend activity…
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="small-note">
+                    Activity is held in backend memory and resets when the server restarts.
+                </p>
+            </section>
+
+            <!-- Request flow -->
             <section class="process-panel">
                 <div>
                     <p class="section-label">HOW IT WORKS</p>
@@ -216,11 +397,15 @@
                     <span class="footer-logo">S</span>
                     SENTINEL
                 </div>
+
                 <p>Agent Defense System · Security Research Prototype</p>
+
                 <span class="footer-status">
-                    <span class="environment-dot"></span> SYSTEM INTERFACE
+                    <span class="environment-dot"></span>
+                    SYSTEM INTERFACE
                 </span>
             </footer>
+
         </section>
     </main>
 </body>
