@@ -1,63 +1,43 @@
 
 const API = "https://chapter-payment-totals-accuracy.trycloudflare.com";
+const REFRESH_INTERVAL_MS = 5000;
 
 const accessButton = document.getElementById("access-button");
 const result = document.getElementById("result");
-const refreshButton = document.getElementById("refresh-activity");
+const statusElement = document.getElementById("status");
+const totalRequestsElement = document.getElementById("total-requests");
+const allowedCountElement = document.getElementById("allowed-count");
+const blockedCountElement = document.getElementById("blocked-count");
+const activityRowsElement = document.getElementById("activity-rows");
+const activityUpdatedElement = document.getElementById("activity-updated");
+const refreshActivityButton = document.getElementById("refresh-activity");
 
-function showResult(type, title, message, statusCode = null) {
-    result.className = `result-box ${type}`;
+function setResult(title, message, decision = "neutral") {
+    if (!result) return;
+
+    result.className = `result-box ${decision}`;
     result.replaceChildren();
 
-    const icon = document.createElement("span");
-    icon.className = "result-icon";
-    icon.textContent =
-        type === "denied" ? "×" :
-        type === "granted" ? "✓" :
-        type === "loading" ? "↻" : "!";
-
-    const content = document.createElement("div");
-
     const heading = document.createElement("strong");
-    heading.textContent = statusCode !== null
-        ? `${title} · HTTP ${statusCode}`
-        : title;
+    heading.textContent = title;
 
-    const description = document.createElement("p");
-    description.textContent = message;
+    const detail = document.createElement("p");
+    detail.textContent = message;
 
-    content.append(heading, description);
-    result.append(icon, content);
+    result.append(heading, detail);
 }
 
-function formatTime(value) {
-    if (!value) return "—";
+async function readResponse(response) {
+    const text = await response.text();
 
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-        return String(value);
+    try {
+        return text ? JSON.parse(text) : {};
+    } catch {
+        return { message: text || "The server returned an empty response." };
     }
-
-    return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-    });
-}
-
-function addCell(row, value) {
-    const cell = document.createElement("td");
-    cell.textContent = value == null ? "—" : String(value);
-    row.appendChild(cell);
-    return cell;
 }
 
 async function checkServer() {
-    const statusElement = document.getElementById("status");
-
-    if (!statusElement) return;
-
     try {
         const response = await fetch(`${API}/`, {
             method: "GET",
@@ -65,25 +45,28 @@ async function checkServer() {
         });
 
         if (!response.ok) {
-            statusElement.textContent = "Server Unavailable";
-            return;
+            throw new Error(`HTTP ${response.status}`);
         }
 
-        statusElement.textContent = "Connected";
-    } catch {
-        statusElement.textContent = "Connection Failed";
+        if (statusElement) statusElement.textContent = "Online";
+        return true;
+    } catch (error) {
+        if (statusElement) statusElement.textContent = "Connection unavailable";
+        console.error("Sentinel backend connection failed:", error);
+        return false;
     }
 }
 
 async function testProtectedAccess() {
-    if (!accessButton || !result) return;
+    if (!accessButton) return;
 
     accessButton.disabled = true;
+    accessButton.classList.add("testing");
 
-    showResult(
-        "loading",
-        "Checking access...",
-        "Waiting for the protection server."
+    setResult(
+        "Checking protected access…",
+        "Waiting for the backend to evaluate this request.",
+        "neutral"
     );
 
     try {
@@ -92,159 +75,174 @@ async function testProtectedAccess() {
             cache: "no-store"
         });
 
-        let data = {};
+        const data = await readResponse(response);
+        const blocked = response.status === 403 || data.status === "blocked";
 
-        try {
-            data = await response.json();
-        } catch {
-            data = {};
+        if (blocked) {
+            setResult(
+                `Access Denied — HTTP ${response.status}`,
+                `${data.message || "The request was blocked."} Reason: ${data.reason || "Detection rule matched."}`,
+                "blocked"
+            );
+        } else if (response.ok) {
+            setResult(
+                `Access Granted — HTTP ${response.status}`,
+                data.message || "You can access the protected content.",
+                "allowed"
+            );
+        } else {
+            setResult(
+                `Request Failed — HTTP ${response.status}`,
+                data.message || "The backend returned an unexpected response.",
+                "neutral"
+            );
         }
-
-        const denied =
-            response.status === 403 ||
-            data.status === "blocked";
-
-        const title = denied
-            ? "ACCESS DENIED"
-            : response.ok
-                ? "ACCESS GRANTED"
-                : "REQUEST FAILED";
-
-        const message = data.reason
-            ? `${data.message || "Request evaluated."} Reason: ${data.reason}`
-            : data.message || "The server returned no message.";
-
-        showResult(
-            denied ? "denied" : response.ok ? "granted" : "error",
-            title,
-            message,
-            response.status
+    } catch (error) {
+        setResult(
+            "Connection Failed",
+            "Could not reach the backend. Confirm FastAPI is running and the Cloudflare Tunnel URL is still active.",
+            "neutral"
         );
 
-        await refreshActivity();
-    } catch {
-        showResult(
-            "error",
-            "CONNECTION FAILED",
-            "Could not reach the backend. Check the current Cloudflare Tunnel URL and ensure FastAPI is running."
-        );
+        console.error("Protected access test failed:", error);
     } finally {
         accessButton.disabled = false;
+        accessButton.classList.remove("testing");
+        await refreshActivity();
     }
 }
 
 async function refreshActivity() {
+    if (!activityRowsElement) return;
+
+    if (refreshActivityButton) refreshActivityButton.disabled = true;
+
     try {
         const response = await fetch(`${API}/activity`, {
             method: "GET",
             cache: "no-store"
         });
 
+        const data = await readResponse(response);
+
         if (!response.ok) {
             throw new Error(`Activity endpoint returned HTTP ${response.status}`);
         }
 
-        const data = await response.json();
+        const counts = data.counts || {};
 
-        updateCounters(data);
-        renderActivity(data);
-        
-        const updatedElement = document.getElementById("activity-updated");
-
-        if (updatedElement) {
-            updatedElement.textContent = new Date().toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
-            });
+        if (totalRequestsElement) {
+            totalRequestsElement.textContent = counts.total ?? 0;
         }
-    } catch {
-        const rows = document.getElementById("activity-rows");
 
-        if (rows && rows.children.length === 0) {
-            rows.innerHTML = `
-                <tr>
-                    <td colspan="5" class="empty-state">
-                        Activity unavailable. Check the backend and /activity endpoint.
-                    </td>
-                </tr>
-            `;
+        if (allowedCountElement) {
+            allowedCountElement.textContent = counts.allowed ?? 0;
         }
-    }
-}
 
-function updateCounters(data) {
-    const totalElement = document.getElementById("total-requests");
-    const allowedElement = document.getElementById("allowed-count");
-    const blockedElement = document.getElementById("blocked-count");
+        if (blockedCountElement) {
+            blockedCountElement.textContent = counts.blocked ?? 0;
+        }
 
-    if (totalElement) {
-        totalElement.textContent = data.total_requests ?? 0;
-    }
+        activityRowsElement.replaceChildren();
 
-    if (allowedElement) {
-        allowedElement.textContent = data.allowed_count ?? 0;
-    }
+        const logs = Array.isArray(data.logs) ? data.logs : [];
 
-    if (blockedElement) {
-        blockedElement.textContent = data.blocked_count ?? 0;
-    }
-}
+        if (logs.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
 
-function renderActivity(data) {
-    const rows = document.getElementById("activity-rows");
+            cell.colSpan = 5;
+            cell.className = "empty-state";
+            cell.textContent = "No protected requests recorded yet.";
 
-    if (!rows) return;
+            row.appendChild(cell);
+            activityRowsElement.appendChild(row);
+        } else {
+            for (const entry of logs) {
+                const row = document.createElement("tr");
 
-    rows.replaceChildren();
+                const timeCell = document.createElement("td");
+                const decisionCell = document.createElement("td");
+                const statusCell = document.createElement("td");
+                const reasonCell = document.createElement("td");
+                const clientCell = document.createElement("td");
 
-    const logs = Array.isArray(data.logs) ? data.logs : [];
+                const date = entry.time ? new Date(entry.time) : null;
 
-    if (logs.length === 0) {
+                timeCell.textContent =
+                    date && !Number.isNaN(date.getTime())
+                        ? date.toLocaleTimeString()
+                        : "—";
+
+                const decision = document.createElement("span");
+                decision.className = "decision-label";
+                decision.textContent = entry.decision || "UNKNOWN";
+                decisionCell.appendChild(decision);
+
+                statusCell.textContent =
+                    entry.status_code != null ? entry.status_code : "—";
+
+                reasonCell.textContent = entry.reason || "—";
+                clientCell.textContent = entry.client || "—";
+
+                row.append(
+                    timeCell,
+                    decisionCell,
+                    statusCell,
+                    reasonCell,
+                    clientCell
+                );
+
+                activityRowsElement.appendChild(row);
+            }
+        }
+
+        if (activityUpdatedElement) {
+            activityUpdatedElement.textContent =
+                `Last updated ${new Date().toLocaleTimeString()}`;
+        }
+
+        if (statusElement) statusElement.textContent = "Online";
+    } catch (error) {
+        if (activityUpdatedElement) {
+            activityUpdatedElement.textContent = "Activity unavailable";
+        }
+
+        activityRowsElement.replaceChildren();
+
         const row = document.createElement("tr");
         const cell = document.createElement("td");
 
         cell.colSpan = 5;
         cell.className = "empty-state";
-        cell.textContent = "No protected requests recorded yet.";
+        cell.textContent =
+            "Cannot load activity. Check the backend and Cloudflare Tunnel.";
 
         row.appendChild(cell);
-        rows.appendChild(row);
-        return;
+        activityRowsElement.appendChild(row);
+
+        console.error("Could not refresh activity:", error);
+    } finally {
+        if (refreshActivityButton) refreshActivityButton.disabled = false;
     }
-
-    logs.forEach((log) => {
-        const row = document.createElement("tr");
-
-        addCell(row, formatTime(log.timestamp));
-
-        const decisionCell = addCell(
-            row,
-            String(log.decision || "UNKNOWN").toUpperCase()
-        );
-
-        decisionCell.className =
-            String(log.decision).toLowerCase() === "block"
-                ? "decision-blocked"
-                : "decision-allowed";
-
-        addCell(row, log.status_code ?? "—");
-        addCell(row, log.reason || "—");
-        addCell(row, log.client_ip || "—");
-
-        rows.appendChild(row);
-    });
 }
 
 if (accessButton) {
     accessButton.addEventListener("click", testProtectedAccess);
 }
 
-if (refreshButton) {
-    refreshButton.addEventListener("click", refreshActivity);
+if (refreshActivityButton) {
+    refreshActivityButton.addEventListener("click", refreshActivity);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    checkServer();
-    refreshActivity();
-});
+async function initializeSentinel() {
+    await checkServer();
+    await refreshActivity();
+
+    window.setInterval(async () => {
+        await checkServer();
+        await refreshActivity();
+    }, REFRESH_INTERVAL_MS);
+}
+
+initializeSentinel();
